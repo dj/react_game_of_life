@@ -14,9 +14,13 @@ var Cell = React.createClass({
         }
     },
     render: function() {
-        var classString = "cell ",
+        var classString = "cell ";
 
-        classString = classString + this.state.color
+        if (this.props.is_alive === true) {
+            classString = classString + this.state.color
+        } else {
+            classString = classString + 'dead'
+        }
 
         return (
             <div className={ classString }>

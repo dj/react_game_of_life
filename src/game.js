@@ -2,24 +2,40 @@
 
 var Game = React.createClass({
     getInitialState: function() {
+        var initCells = [],
+
+            board_width  = document.body.clientWidth,
+            board_height = document.getElementById('board').clientHeight
+
+            initCellSize = Math.floor(board_width * 0.02) + 1,
+            initColumns     = Math.floor(board_width / initCellSize) + 1,
+            initRows        = Math.floor(board_height / initCellSize) + 1
+
+
+        for (var i = 1; i <= (initColumns * initRows); i++) {
+            var alive = (1 === Math.floor(Math.random() * 10));
+            initCells.push(<Cell is_alive={alive}/>);
+        }
+
         return {
-            columnWidth: Math.floor(document.body.clientWidth * 0.02),
-            columns: Math.floor(document.body.clientWidth / Math.floor(document.body.clientWidth * 0.02)),
-            rows: Math.floor(document.getElementById('board').clientHeight / Math.floor(document.body.clientWidth * 0.02))
+            time: 0,
+            cellSize: initCellSize,
+            columns: initColumns,
+            rows: initRows,
+            cells: initCells
         }
     },
+    tick: function() {
+        this.setState({time: this.state.time + 1});
+    },
+    componentDidMount: function() {
+        this.interval = setInterval(this.tick, 1000);
+    },
     render: function() {
-        var cells = [];
-
-            for (var i = 1; i <= (this.state.columns * this.state.rows); i++) {
-                cells.push(<Cell />)
-            }
-
-
         return (
             <div className="game">
                 {
-                    cells.map(function(result){
+                    this.state.cells.map(function(result){
                         return result;
                     })
                 }
