@@ -1,0 +1,71 @@
+// Colors
+$blue: #004358;
+$green: #1F8A70;
+$yellow: #BEDB39;
+$red: #FF5347;
+$orange: #FD7400;
+$white: #efefef;
+$black: #222;
+
+// Color classes
+.blue {
+    background-color: $blue;
+}
+
+.green {
+    background-color: $green;
+}
+
+.yellow {
+    background-color: $yellow;
+}
+
+.red {
+    background-color: $red;
+}
+
+.orange {
+    background-color: $orange;
+}
+
+.white {
+    background-color: $white;
+}
+
+.black {
+    background-color: $black;
+}
+
+body {
+    background-color: $black;
+}
+
+#game {
+    margin: 50px auto;
+    width: 500px;
+    height: 500px;
+    background-color: $black;
+}
+
+.cell {
+    float: left;
+    margin: 0;
+    width: 50px;
+    height: 50px;
+    border: 1px solid $black;
+    border-radius: 5px;
+}
+
+// Mixins
+
+@mixin box-sizing($box-model) {
+  -webkit-box-sizing: $box-model; // Safari <= 5
+     -moz-box-sizing: $box-model; // Firefox <= 19
+          box-sizing: $box-model;
+}
+
+*,
+*:after,
+*:before {
+  @include box-sizing(border-box);
+}

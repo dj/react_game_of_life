@@ -1,0 +1,44 @@
+.blue {
+  background-color: #004358; }
+
+.green {
+  background-color: #1f8a70; }
+
+.yellow {
+  background-color: #bedb39; }
+
+.red {
+  background-color: #ff5347; }
+
+.orange {
+  background-color: #fd7400; }
+
+.white {
+  background-color: #efefef; }
+
+.black {
+  background-color: #222222; }
+
+body {
+  background-color: #222222; }
+
+#game {
+  margin: 50px auto;
+  width: 500px;
+  height: 500px;
+  background-color: #222222; }
+
+.cell {
+  float: left;
+  margin: 0;
+  width: 50px;
+  height: 50px;
+  border: 1px solid #222222;
+  border-radius: 5px; }
+
+*,
+*:after,
+*:before {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box; }
