@@ -13,8 +13,8 @@ var Game = React.createClass({
 
 
         for (var i = 1; i <= (initColumns * initRows); i++) {
-            var alive = (1 === Math.floor(Math.random() * 10));
-            initCells.push(<Cell is_alive={alive}/>);
+            var alive = (1 === Math.floor(Math.random() * 20));
+            initCells.push({alive: alive});
         }
 
         return {
@@ -22,7 +22,7 @@ var Game = React.createClass({
             cellSize: initCellSize,
             columns: initColumns,
             rows: initRows,
-            cells: initCells
+            cellsProps: initCells
         }
     },
     tick: function() {
@@ -32,11 +32,14 @@ var Game = React.createClass({
         this.interval = setInterval(this.tick, 1000);
     },
     render: function() {
+        var time = this.state.time,
+            cellsProps = this.state.cellsProps
         return (
             <div className="game">
                 {
-                    this.state.cells.map(function(result){
-                        return result;
+                    cellsProps.map(function(result) {
+                        var alive = result['alive']
+                        return <Cell is_alive={alive} time={time} />
                     })
                 }
             </div>
