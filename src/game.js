@@ -3,22 +3,25 @@
 var Game = React.createClass({
     getInitialState: function() {
         return {
-            cellColors: [
-                'blue'
-                , 'green'
-                , 'yellow'
-                , 'red'
-                , 'orange'
-            ]
+            columnWidth: Math.floor(document.body.clientWidth * 0.02),
+            columns: Math.floor(document.body.clientWidth / Math.floor(document.body.clientWidth * 0.02))
         }
     },
     render: function() {
-        var idx = (Math.floor((Math.random()) * 100) % 4),
-            color = this.state.cellColors[idx];
+        var cells = [];
+
+            for (var i = 1; i <= this.state.columns; i++) {
+                cells.push(<Cell />)
+            }
+
 
         return (
             <div className="game">
-                <Cell cellColor={color}/>
+                {
+                    cells.map(function(result){
+                        return <Cell />
+                    })
+                }
             </div>
         );
     }
@@ -28,3 +31,4 @@ React.renderComponent(
     <Game />,
     document.getElementById('board')
 );
+
