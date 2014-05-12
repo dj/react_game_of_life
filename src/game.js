@@ -26,5 +26,5 @@ var Game = React.createClass({
 
 React.renderComponent(
     <Game />,
-    document.getElementById('game')
+    document.getElementById('board')
 );
