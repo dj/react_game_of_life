@@ -34,12 +34,6 @@ $black: #222;
   @include box-sizing(border-box);
 }
 
-@mixin square($size) {
-    width: $size;
-    height: 0;
-    padding-bottom: $size;
-}
-
 ///////////
 // Board //
 ///////////
@@ -66,9 +60,10 @@ body {
 $cell-width: 2%;
 
 .cell {
-    float: left;
+    position: absolute;
     margin: 0;
-    width: 50px;
-    height: 50px;
-    @include square($cell-width);
+}
+
+.dead {
+    display: none;
 }

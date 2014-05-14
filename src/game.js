@@ -1,20 +1,29 @@
 /** @jsx React.DOM */
 
+function Point(x, y) {
+    this.x = x;
+    this.y = y;
+}
+
 var Game = React.createClass({
     getInitialState: function() {
-        var initCells = [],
+        var initGrid = [],
 
             board_width  = document.body.clientWidth,
             board_height = document.getElementById('board').clientHeight
 
             initCellSize = Math.floor(board_width * 0.02) + 1,
-            initColumns     = Math.floor(board_width / initCellSize) + 1,
-            initRows        = Math.floor(board_height / initCellSize) + 1
+            initColumns  = Math.floor(board_width / initCellSize) + 1,
+            initRows     = Math.floor(board_height / initCellSize) + 1
 
-
-        for (var i = 1; i <= (initColumns * initRows); i++) {
-            var alive = (1 === Math.floor(Math.random() * 20));
-            initCells.push({alive: alive});
+        // Create Rows and Columns
+        for (var row = 0; row < initRows; row++) {
+            for (var col = 0; col < initColumns; col++) {
+                initGrid.push({
+                    point: new Point(col, row),
+                    alive: (1 == Math.floor((Math.random() * 100)))
+                });
+            }
         }
 
         return {
@@ -22,28 +31,29 @@ var Game = React.createClass({
             cellSize: initCellSize,
             columns: initColumns,
             rows: initRows,
-            cellsProps: initCells
+            grid: initGrid
         }
     },
-    tick: function() {
-        this.setState({time: this.state.time + 1});
-    },
-    componentDidMount: function() {
-        this.interval = setInterval(this.tick, 1000);
-    },
+
+    // tick: function() {
+    //     this.setState({time: this.state.time + 1});
+    // },
+    // componentDidMount: function() {
+    //     this.interval = setInterval(this.tick, 1000);
+    // },
     render: function() {
-        var time = this.state.time,
-            cellsProps = this.state.cellsProps
+        var grid = this.state.grid,
+            size = this.state.cellSize
+
         return (
-            <div className="game">
+            <div>
                 {
-                    cellsProps.map(function(result) {
-                        var alive = result['alive']
-                        return <Cell is_alive={alive} time={time} />
+                    grid.map(function(cell) {
+                        return <Cell point={cell['point']} size={size} alive={cell['alive']}/>;
                     })
                 }
             </div>
-        );
+        )
     }
 });
 

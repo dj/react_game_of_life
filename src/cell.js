@@ -14,17 +14,23 @@ var Cell = React.createClass({
         }
     },
     render: function() {
-        var classString = "cell ";
+        var cx = React.addons.classSet;
+        var style = {
+                width: this.props.size,
+                height: this.props.size,
+                left: (this.props.size * this.props.point.x),
+                top: (this.props.size * this.props.point.y)
+            },
+            classes = cx({
+                'cell': true,
+                'blue': true,
+                'dead': !(this.props.alive)
+            });
 
-        if (this.props.is_alive === true) {
-            classString = classString + this.state.color
-        } else {
-            classString = classString + 'dead'
-        }
+        classes += " " + this.state.color
 
         return (
-            <div className={ classString }>
-            </div>
-        );
+            <div className={classes} style={style}></div>
+        )
     }
 });

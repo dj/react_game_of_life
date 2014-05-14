@@ -40,10 +40,8 @@ body {
   background-color: #222222; }
 
 .cell {
-  float: left;
-  margin: 0;
-  width: 50px;
-  height: 50px;
-  width: 2%;
-  height: 0;
-  padding-bottom: 2%; }
+  position: absolute;
+  margin: 0; }
+
+.dead {
+  display: none; }
