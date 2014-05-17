@@ -14,8 +14,8 @@ var Cell = React.createClass({
         }
     },
     render: function() {
-        var cx = React.addons.classSet;
-        var style = {
+        var cx = React.addons.classSet,
+            style = {
                 width: this.props.size,
                 height: this.props.size,
                 left: (this.props.size * this.props.point.x),
@@ -23,14 +23,18 @@ var Cell = React.createClass({
             },
             classes = cx({
                 'cell': true,
-                'blue': true,
-                'dead': !(this.props.alive)
+                'dead': (!this.props.alive)
             });
+            x = this.props.point.x,
+            y = this.props.point.y;
 
         classes += " " + this.state.color
 
         return (
-            <div className={classes} style={style}></div>
+            <div className={classes} style={style}>
+                <span> {x} </span>
+                <span> {y} </span>
+            </div>
         )
     }
 });

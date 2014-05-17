@@ -40,6 +40,7 @@ body {
   background-color: #222222; }
 
 .cell {
+  display: inline;
   position: absolute;
   margin: 0; }
 
