@@ -3,6 +3,26 @@
 function Point(x, y) {
     this.x = x;
     this.y = y;
+
+    this.neighbors = function() {
+        // Just return all possible neighbours for now
+        // TODO: handle edge cases (literally)
+        // This will return the wrong point if you give
+        // supply a negative x or y
+        return [
+            // Top Row
+            new Point((x - 1), (y - 1)),
+            new Point(x, (y - 1)),
+            new Point((x + 1), (y - 1)),
+            // Current Row
+            new Point((x - 1), y),
+            new Point((x + 1), y),
+            // Bottom Row
+            new Point((x - 1), (y + 1)),
+            new Point(x, (y + 1)),
+            new Point((x + 1), (y + 1))
+        ]
+    }
 }
 
 var Game = React.createClass({
@@ -23,7 +43,6 @@ var Game = React.createClass({
             cellSize: cellSize,
             rows: rows,
             cols: cols,
-            aliveCells: []
         }
     },
     getInitialState: function () {
@@ -65,81 +84,74 @@ var Game = React.createClass({
             alivePoints: alivePoints
         }
     },
-    countNeighbours: function (row) {
+    countAliveNeighbors: function (row) {
+        var alivePoints = this.state.alivePoints;
 
+        // Returns the row of cells
+        // with updated neighbor count
+        var updatedRow = row.map(function(cell) {
+            var neighborPoints = cell.point.neighbors();
+
+            var aliveNeighbors = neighborPoints.filter(function(neighbor) {
+                var result = alivePoints.filter(function(alive){
+                    return (alive.x == neighbor.x) && (alive.y == neighbor.y);
+                });
+                // Return true if the neighbor is in the list
+                return (result.length == 1);
+            });
+
+            cell.neighbors = aliveNeighbors.length;
+            return cell
+        });
+
+        return updatedRow;
+    },
+    killAndRevive: function(row) {
+        var updatedRow = row.map(function(cell) {
+            if (cell.alive) {
+                // Die by underpopulation
+                // Die by overcrowding
+                if ((cell.neighbors < 2) || (cell.neighbors > 3)) {
+                    cell.alive = false;
+                    return cell;
+                } else {
+                    return cell;
+                }
+            } else if (cell.neighbors == 3) {
+                // Revive
+                cell.alive = true;
+                return cell;
+            } else {
+                return cell;
+            }
+        });
+        return updatedRow;
+    },
+    getAlivePoints: function(nextGrid) {
+        var result = []
+
+        nextGrid.map(function(row) {
+            var results = row.map(function(cell) {
+                if (cell.alive) return result.push(cell.point);
+            });
+            return results;
+        });
+
+        return result;
     },
     tick: function () {
-        var nextGrid = this.state.grid.map(countNeighbours);
+        var nextGrid = this.state.grid.map(this.countAliveNeighbors);
 
-        // Kill Cells
-        var nextGrid = nextGrid.map()
+        // Kill and Revive Cells
+        nextGrid = nextGrid.map(this.killAndRevive)
+        // Update Alive Points
+        var nextAlivePoints = this.getAlivePoints(nextGrid);
 
-        // for (var col = 0; col < initCols; col++) {
-        //     nextGrid[col] = [];
-        //     for (var row = 0; row < initRows; row++) {
-        //         var cell = this.state.grid[col][row];
-
-        //         var leftCol  = currentGrid[(cell.point.x - 1)],
-        //             thisCol  = currentGrid[cell.point.x],
-        //             rightCol = currentGrid[(cell.point.x + 1)];
-
-        //         if (!leftCol) {
-        //             var neighbors = [
-        //                 thisCol[cell.point.y - 1],
-        //                 thisCol[cell.point.y + 1],
-
-        //                 rightCol[cell.point.y - 1],
-        //                 rightCol[cell.point.y],
-        //                 rightCol[cell.point.y + 1]
-        //             ];
-        //         } else if (!rightCol) {
-        //             var neighbors = [
-        //                 leftCol[cell.point.y - 1],
-        //                 leftCol[cell.point.y],
-        //                 leftCol[cell.point.y + 1],
-
-        //                 thisCol[cell.point.y - 1],
-        //                 thisCol[cell.point.y + 1]
-        //             ];
-        //         } else {
-        //             var neighbors = [
-        //                 leftCol[cell.point.y - 1],
-        //                 leftCol[cell.point.y],
-        //                 leftCol[cell.point.y + 1],
-
-        //                 thisCol[cell.point.y - 1],
-        //                 thisCol[cell.point.y + 1],
-
-        //                 rightCol[cell.point.y - 1],
-        //                 rightCol[cell.point.y],
-        //                 rightCol[cell.point.y + 1]
-        //             ];
-        //         }
-
-        //         var aliveNeighbors = neighbors.filter(function(neighbor) {
-        //             return ((neighbor !== undefined) && neighbor.alive)
-        //         });
-
-        //         if (cell.alive) {
-        //             // Die by underpopulation
-        //             // Die by overcrowding
-        //             if ((aliveNeighbors.length < 2) || (aliveNeighbors.length > 3)) {
-        //                 cell.alive = false;
-        //             }
-        //         } else if (aliveNeighbors.length == 3) {
-        //             // Revive cells via reproduction
-        //             cell.alive = true;
-        //         }
-
-        //         var finalCell = nextGrid[cell.point.x][cell.point.y];
-        //         nextGrid.push(finalCell);
-        //     }
-        // }
-
-        // this.setState({grid: nextGrid});
+        this.setState({grid: nextGrid});
+        this.setState({alivePoints: nextAlivePoints});
     },
     componentDidMount: function() {
-        this.interval = setInterval(this.tick, 1000);
+        this.interval = setInterval(this.tick, 3000);
     },
     render: function() {
         var size = this.state.cellSize,
