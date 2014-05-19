@@ -47,8 +47,7 @@ var Game = React.createClass({
     },
     getInitialState: function () {
         var initGrid   = [],
-            gridState  = this.getGridVals(),
-            alivePoints = [];
+            gridState  = this.getGridVals();
 
         // Initialize empty arrays
         for (var col = 0; col < gridState.cols; col++) {
@@ -64,10 +63,6 @@ var Game = React.createClass({
             for (var row = 0; row < gridState.rows; row++) {
                 var alive = is_alive(),
                     point = new Point(col, row);
-
-                if (alive) {
-                    alivePoints.push(point);
-                }
                 colCells.push({
                     neighbors: 0,
                     point: point,
@@ -81,74 +76,50 @@ var Game = React.createClass({
             columns: gridState.rows,
             rows: gridState.cols,
             grid: initGrid,
-            alivePoints: alivePoints
         }
     },
-    countAliveNeighbors: function (row) {
-        var alivePoints = this.state.alivePoints;
+    updateCells: function (row) {
+        var alivePoints = this.state.alivePoints,
+            grid        = this.state.grid;
 
         // Returns the row of cells
         // with updated neighbor count
         var updatedRow = row.map(function(cell) {
-            var neighborPoints = cell.point.neighbors();
+            var neighborPoints = cell.point.neighbors(),
+                aliveNeighbors = 0,
+                cellIsAlive    = cell.alive;
 
-            var aliveNeighbors = neighborPoints.filter(function(neighbor) {
-                var result = alivePoints.filter(function(alive){
-                    return (alive.x == neighbor.x) && (alive.y == neighbor.y);
-                });
-                // Return true if the neighbor is in the list
-                return (result.length == 1);
+            // For each neighbor, check if it exists
+            // and count the number that are alive
+            neighborPoints.map(function(neighbor) {
+                if ((grid[neighbor.x]) && (grid[neighbor.x][neighbor.y])) {
+                    if (grid[neighbor.x][neighbor.y].alive) aliveNeighbors++;
+                }
             });
 
-            cell.neighbors = aliveNeighbors.length;
-            return cell
-        });
-
-        return updatedRow;
-    },
-    killAndRevive: function(row) {
-        var updatedRow = row.map(function(cell) {
-            if (cell.alive) {
+            if (cellIsAlive &&
+                (aliveNeighbors < 2) || (aliveNeighbors > 3)) {
                 // Die by underpopulation
                 // Die by overcrowding
-                if ((cell.neighbors < 2) || (cell.neighbors > 3)) {
-                    cell.alive = false;
-                    return cell;
-                } else {
-                    return cell;
-                }
-            } else if (cell.neighbors == 3) {
+                cellIsAlive = false;
+            } else if (aliveNeighbors == 3) {
                 // Revive
-                cell.alive = true;
-                return cell;
-            } else {
-                return cell;
+                cellIsAlive = true;
             }
+
+            var newCell = React.addons.update(cell, {
+                neighbors: {$set: aliveNeighbors},
+                alive:     {$set: cellIsAlive}
+            });
+            return newCell;
         });
+
         return updatedRow;
     },
-    getAlivePoints: function(nextGrid) {
-        var result = []
-
-        nextGrid.map(function(row) {
-            var results = row.map(function(cell) {
-                if (cell.alive) return result.push(cell.point);
-            });
-            return results;
-        });
-
-        return result;
-    },
     tick: function () {
-        var nextGrid = this.state.grid.map(this.countAliveNeighbors);
-
-        // Kill and Revive Cells
-        nextGrid = nextGrid.map(this.killAndRevive)
-        // Update Alive Points
-        var nextAlivePoints = this.getAlivePoints(nextGrid);
+        var nextGrid = this.state.grid.map(this.updateCells);
 
         this.setState({grid: nextGrid});
-        this.setState({alivePoints: nextAlivePoints});
     },
     componentDidMount: function() {
         this.interval = setInterval(this.tick, 100);

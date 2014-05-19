@@ -3,7 +3,7 @@
 var Cell = React.createClass({
     render: function() {
         var cx = React.addons.classSet,
-             cellColors = [
+            cellColors = [
                 'blue'
                 , 'green'
                 , 'yellow'
