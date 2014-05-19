@@ -1,39 +1,34 @@
 /** @jsx React.DOM */
 
 var Cell = React.createClass({
-    getInitialState: function() {
-        var cellColors = [
+    render: function() {
+        var cx = React.addons.classSet,
+             cellColors = [
                 'blue'
                 , 'green'
                 , 'yellow'
                 , 'red'
                 , 'orange'
-        ]
-        return {
-            color: cellColors[Math.floor(Math.random() * 5)]
-        }
-    },
-    render: function() {
-        var cx = React.addons.classSet,
+            ],
             style = {
                 width: this.props.size,
                 height: this.props.size,
                 left: (this.props.size * this.props.point.x),
                 top: (this.props.size * this.props.point.y)
             },
+            dead = (!this.props.alive),
             classes = cx({
                 'cell': true,
-                'dead': (!this.props.alive)
+                'dead': dead
             });
+            colorString = (cellColors[Math.floor(Math.random() * 5)]),
             x = this.props.point.x,
             y = this.props.point.y;
 
-        classes += " " + this.state.color
+        classes += " " + colorString;
 
         return (
             <div className={classes} style={style}>
-                <span> {x} </span>
-                <span> {y} </span>
             </div>
         )
     }

@@ -151,7 +151,7 @@ var Game = React.createClass({
         this.setState({alivePoints: nextAlivePoints});
     },
     componentDidMount: function() {
-        this.interval = setInterval(this.tick, 3000);
+        this.interval = setInterval(this.tick, 100);
     },
     render: function() {
         var size = this.state.cellSize,
