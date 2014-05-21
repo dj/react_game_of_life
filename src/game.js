@@ -47,7 +47,14 @@ var Game = React.createClass({
     },
     getInitialState: function () {
         var initGrid   = [],
-            gridState  = this.getGridVals();
+            gridState  = this.getGridVals(),
+            cellColors = [
+                'blue',
+                'green',
+                'yellow',
+                'red',
+                'orange'
+            ];
 
         // Initialize empty arrays
         for (var col = 0; col < gridState.cols; col++) {
@@ -66,7 +73,8 @@ var Game = React.createClass({
                 colCells.push({
                     neighbors: 0,
                     point: point,
-                    alive: alive
+                    alive: alive,
+                    color: cellColors[Math.floor(Math.random() * cellColors.length)]
                 });
             }
         }
@@ -125,14 +133,14 @@ var Game = React.createClass({
         this.interval = setInterval(this.tick, 100);
     },
     render: function() {
-        var size = this.state.cellSize,
+        var size         = this.state.cellSize,
             cells        = this.state.grid,
             flattenCells = [].concat.apply([], cells);
 
         return (
             <div>
                 {flattenCells.map(function(result) {
-                    return <Cell point={result.point} size={size} alive={result.alive}/>;
+                    return <Cell point={result.point} size={size} alive={result.alive} color={result.color}/>;
                 })}
             </div>
         )
