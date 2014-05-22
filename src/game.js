@@ -36,8 +36,8 @@ var Game = React.createClass({
                 var cellSize = Math.floor(boardHeight * 0.02) + 1;
             }
 
-        var cols     = Math.floor(boardWidth / cellSize) + 1,
-            rows     = Math.floor(boardHeight / cellSize) + 1;
+        var cols = Math.floor(boardWidth / cellSize) + 1,
+            rows = Math.floor(boardHeight / cellSize) + 1;
 
         return {
             cellSize: cellSize,
@@ -46,7 +46,8 @@ var Game = React.createClass({
         }
     },
     getInitialState: function () {
-        var initGrid   = [],
+        var time       = 0,
+            initGrid   = [],
             gridState  = this.getGridVals(),
             cellColors = [
                 'blue',
@@ -84,6 +85,7 @@ var Game = React.createClass({
             columns: gridState.rows,
             rows: gridState.cols,
             grid: initGrid,
+            time: time
         }
     },
     updateCells: function (row) {
@@ -116,7 +118,6 @@ var Game = React.createClass({
             }
 
             var newCell = React.addons.update(cell, {
-                neighbors: {$set: aliveNeighbors},
                 alive:     {$set: cellIsAlive}
             });
             return newCell;
@@ -125,20 +126,25 @@ var Game = React.createClass({
         return updatedRow;
     },
     tick: function () {
-        var nextGrid = this.state.grid.map(this.updateCells);
+        var nextGrid = this.state.grid.map(this.updateCells),
+            nextTime = this.state.time + 1;
 
-        this.setState({grid: nextGrid});
+        this.setState({grid: nextGrid, time: nextTime});
     },
     componentDidMount: function() {
         this.interval = setInterval(this.tick, 100);
     },
     render: function() {
-        var size         = this.state.cellSize,
+        var time         = this.state.time,
+            size         = this.state.cellSize,
             cells        = this.state.grid,
             flattenCells = [].concat.apply([], cells);
 
         return (
             <div>
+                <div id="time">
+                    <p>{this.state.time}</p>
+                </div>
                 {flattenCells.map(function(result) {
                     return <Cell point={result.point} size={size} alive={result.alive} color={result.color}/>;
                 })}

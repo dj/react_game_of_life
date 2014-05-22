@@ -53,6 +53,20 @@ body {
     background-color: $black;
 }
 
+#time {
+    position: fixed;
+    left: 10px;
+    top: 10px;
+
+    p {
+        font-size: 16px;
+        font-family: Helvetica, sans-serif;
+        color: white;
+        padding: 0;
+        margin: 0;
+    }
+}
+
 ///////////
 // Cells //
 ///////////
