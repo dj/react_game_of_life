@@ -30,14 +30,15 @@ body {
   margin: 0;
   background-color: #222222;
   width: 100%;
-  height: 100%; }
+  height: 100%;
+  background-color: #222222; }
 
-#board {
+#board,
+#container {
   position: fixed;
   width: 100%;
   height: 100%;
-  margin: 0;
-  background-color: #222222; }
+  margin: 0; }
 
 #time {
   position: fixed;

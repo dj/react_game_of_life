@@ -27,8 +27,8 @@ function Point(x, y) {
 
 var Game = React.createClass({
     getGridVals: function () {
-        var boardWidth  = document.getElementById('board').clientWidth,
-            boardHeight = document.getElementById('board').clientHeight;
+        var boardWidth  = document.getElementById('container').clientWidth,
+            boardHeight = document.getElementById('container').clientHeight;
 
             if (boardWidth > boardHeight) {
                 var cellSize = Math.floor(boardWidth * 0.02) + 1
@@ -134,6 +134,11 @@ var Game = React.createClass({
     componentDidMount: function() {
         this.interval = setInterval(this.tick, 100);
     },
+    restart: function() {
+        console.log("restart!!");
+        var newGameState = this.getInitialState();
+        this.setState(newGameState);
+    },
     render: function() {
         var time         = this.state.time,
             size         = this.state.cellSize,
@@ -141,7 +146,7 @@ var Game = React.createClass({
             flattenCells = [].concat.apply([], cells);
 
         return (
-            <div>
+            <div id='board' onDoubleClick={this.restart}>
                 <div id="time">
                     <p>{this.state.time}</p>
                 </div>
@@ -153,8 +158,9 @@ var Game = React.createClass({
     }
 });
 
+React.initializeTouchEvents(true)
 React.renderComponent(
     <Game />,
-    document.getElementById('board')
+    document.getElementById('container')
 );
 
