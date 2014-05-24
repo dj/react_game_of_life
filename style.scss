@@ -74,10 +74,10 @@ body {
 
 .cell {
     display: inline;
-    position: absolute;
+    position: fixed;
     margin: 0;
 }
 
 .dead {
-    display: none;
+    background-color: #222;
 }

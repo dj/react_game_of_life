@@ -134,31 +134,37 @@ var Game = React.createClass({
     componentDidMount: function() {
         this.interval = setInterval(this.tick, 100);
     },
-    restart: function() {
-        console.log("restart!!");
+    _restart: function() {
         var newGameState = this.getInitialState();
         this.setState(newGameState);
+    },
+    __onClick: function(e) {
+        var x = Math.floor(e.clientX / this.state.cellSize),
+            y = Math.floor(e.clientY / this.state.cellSize),
+            nextGrid = this.state.grid;
+
+        nextGrid[x][y].alive = true;
+
+        this.setState({grid: nextGrid})
     },
     render: function() {
         var time         = this.state.time,
             size         = this.state.cellSize,
             cells        = this.state.grid,
             flattenCells = [].concat.apply([], cells);
-
         return (
-            <div id='board' onDoubleClick={this.restart}>
+            <div id='board' onClick={this.__onClick} onDoubleClick={this._restart}>
                 <div id="time">
                     <p>{this.state.time}</p>
                 </div>
                 {flattenCells.map(function(result) {
-                    return <Cell point={result.point} size={size} alive={result.alive} color={result.color}/>;
+                    return <Cell revive={this._revive} point={result.point} size={size} alive={result.alive} color={result.color}/>;
                 })}
             </div>
         )
     }
 });
 
-React.initializeTouchEvents(true)
 React.renderComponent(
     <Game />,
     document.getElementById('container')
