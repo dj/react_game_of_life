@@ -152,7 +152,7 @@ var Game = React.createClass({
     componentDidMount: function() {
         this.interval = setInterval(this.tick, 100);
     },
-    _restart: function() {
+    __restart: function() {
         var newGame = this.getInitialState();
         this.setState(newGame);
     },
@@ -174,7 +174,7 @@ var Game = React.createClass({
             flattenCells = [].concat.apply([], cells);
 
         return (
-            <div id='board' onClick={this.__onClick} onDoubleClick={this._restart}>
+            <div id='board' onClick={this.__onClick} onTouchStart={this.__onClick} onDoubleClick={this.__restart} onTouchMove={this.__restart}>
                 <div id='time'>
                     <p>{this.state.time}</p>
                 </div>
@@ -186,6 +186,7 @@ var Game = React.createClass({
     }
 });
 
+React.initializeTouchEvents(true)
 React.renderComponent(
     <Game />,
     document.getElementById('container')
