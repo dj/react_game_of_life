@@ -7,7 +7,8 @@ var Cell = React.createClass({
                 width: this.props.size,
                 height: this.props.size,
                 left: (this.props.size * this.props.point.x),
-                top: (this.props.size * this.props.point.y)
+                top: (this.props.size * this.props.point.y),
+                backgroundColor: this.props.color
             },
             dead = (!this.props.alive),
             x = this.props.point.x,
@@ -17,8 +18,6 @@ var Cell = React.createClass({
             'cell': true,
             'dead': dead
         });
-
-        classes += " " + this.props.color;
 
         return (
             <div className={classes} style={style}>

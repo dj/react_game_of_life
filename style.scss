@@ -48,7 +48,7 @@ body {
 
 #board,
 #container {
-    position: fixed;
+    position: absolute;
     width: 100%;
     height: 100%;
     margin: 0;
@@ -60,7 +60,7 @@ body {
     top: 10px;
 
     p {
-        font-size: 16px;
+        font-size: 25px;
         font-family: Helvetica, sans-serif;
         color: white;
         padding: 0;
@@ -76,8 +76,9 @@ body {
     display: inline;
     position: fixed;
     margin: 0;
+    z-index: -1;
 }
 
 .dead {
-    background-color: #222;
+    display: none;
 }

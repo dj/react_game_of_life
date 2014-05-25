@@ -42,20 +42,31 @@ var Game = React.createClass({
         return {
             cellSize: cellSize,
             rows: rows,
-            cols: cols,
+            cols: cols
         }
+    },
+    getColorVals: function(numColors) {
+        // http://krazydad.com/tutorials/makecolors.php
+        var frequency = .3,
+            colors    = [];
+
+        for (var i = 0; i < numColors; i++) {
+            red   = Math.floor(Math.sin(frequency*i + 0) * 127 + 128);
+            green = Math.floor(Math.sin(frequency*i + 2) * 127 + 128);
+            blue  = Math.floor(Math.sin(frequency*i + 4) * 127 + 128);
+            rgbString = 'rgb(' + red + ',' + green + ',' + blue + ')'
+            colors.push(rgbString)
+        }
+        return colors
+
     },
     getInitialState: function () {
         var time       = 0,
             initGrid   = [],
             gridState  = this.getGridVals(),
-            cellColors = [
-                'blue',
-                'green',
-                'yellow',
-                'red',
-                'orange'
-            ];
+            numCells   = (gridState.cols * gridState.rows),
+            cellColors = this.getColorVals(numCells),
+            colorIdx   = 0;
 
         // Initialize empty arrays
         for (var col = 0; col < gridState.cols; col++) {
@@ -70,13 +81,16 @@ var Game = React.createClass({
             var colCells = initGrid[col];
             for (var row = 0; row < gridState.rows; row++) {
                 var alive = is_alive(),
-                    point = new Point(col, row);
+                    point = new Point(col, row),
+                    color = cellColors[colorIdx];
+                // Assign a color if alive
                 colCells.push({
                     neighbors: 0,
                     point: point,
                     alive: alive,
-                    color: cellColors[Math.floor(Math.random() * cellColors.length)]
+                    color: color
                 });
+                colorIdx++;
             }
         }
 
@@ -85,7 +99,9 @@ var Game = React.createClass({
             columns: gridState.rows,
             rows: gridState.cols,
             grid: initGrid,
-            time: time
+            time: time,
+            gameState: 'PAUSE',
+            colors: cellColors
         }
     },
     updateCells: function (row) {
@@ -129,19 +145,23 @@ var Game = React.createClass({
         var nextGrid = this.state.grid.map(this.updateCells),
             nextTime = this.state.time + 1;
 
-        this.setState({grid: nextGrid, time: nextTime});
+        if (this.state.gameState === 'PLAY') {
+            this.setState({grid: nextGrid, time: nextTime});
+        }
     },
     componentDidMount: function() {
         this.interval = setInterval(this.tick, 100);
     },
     _restart: function() {
-        var newGameState = this.getInitialState();
-        this.setState(newGameState);
+        var newGame = this.getInitialState();
+        this.setState(newGame);
     },
     __onClick: function(e) {
         var x = Math.floor(e.clientX / this.state.cellSize),
             y = Math.floor(e.clientY / this.state.cellSize),
             nextGrid = this.state.grid;
+
+        if (this.state.gameState === 'PAUSE') this.setState({gameState: 'PLAY'})
 
         nextGrid[x][y].alive = true;
 
@@ -152,9 +172,10 @@ var Game = React.createClass({
             size         = this.state.cellSize,
             cells        = this.state.grid,
             flattenCells = [].concat.apply([], cells);
+
         return (
             <div id='board' onClick={this.__onClick} onDoubleClick={this._restart}>
-                <div id="time">
+                <div id='time'>
                     <p>{this.state.time}</p>
                 </div>
                 {flattenCells.map(function(result) {
