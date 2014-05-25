@@ -31,9 +31,9 @@ var Game = React.createClass({
             boardHeight = document.getElementById('container').clientHeight;
 
             if (boardWidth > boardHeight) {
-                var cellSize = Math.floor(boardWidth * 0.02) + 1
+                var cellSize = Math.floor(boardWidth * 0.03) + 1
             } else {
-                var cellSize = Math.floor(boardHeight * 0.02) + 1;
+                var cellSize = Math.floor(boardHeight * 0.03) + 1;
             }
 
         var cols = Math.floor(boardWidth / cellSize) + 1,
