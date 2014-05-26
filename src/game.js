@@ -28,9 +28,14 @@ function Point(x, y) {
 var Game = React.createClass({
     getGridVals: function () {
         var boardWidth      = document.getElementById('container').clientWidth,
-            cellSize        = Math.floor(boardWidth * 0.03),
             clientHeight    = document.getElementById('container').clientHeight,
             boardHeight     = (clientHeight - 100);
+
+        if (boardWidth > boardHeight) {
+            var cellSize = Math.floor(boardWidth * 0.03);
+        } else {
+            var cellSize = Math.floor(boardHeight * 0.10);
+        }
 
         var cols = Math.floor(boardWidth / cellSize),
             rows = Math.floor(boardHeight / cellSize);
@@ -170,9 +175,19 @@ var Game = React.createClass({
     },
     playButtonText: function () {
         if (this.state.gameState == 'PLAY') {
-            return 'PAUSE'
+            return 'PAUSE (space)'
         } else {
-            return 'PLAY'
+            return 'PLAY (space)'
+        }
+    },
+    handleKeyPress: function(e) {
+        console.log(e.which);
+        // Space toggles play
+        if (e.which == '32') {
+            e.preventDefault();
+            this.togglePlay();
+        } else if (e.which == '82') {
+            this.restart();
         }
     },
     render: function() {
@@ -182,18 +197,18 @@ var Game = React.createClass({
             flattenCells = [].concat.apply([], cells);
 
         return (
-            <div>
-                <div id='board' onClick={this.__onClick} onTouchStart={this.__onClick} onDoubleClick={this.restart} onTouchMove={this.__restart}>
+            <div onKeyDown={this.handleKeyPress}>
+                <div id='board' onClick={this.__onClick} onKeyDown={this.handleKeyPress} onKeyDown={this.handleKeyDown} onTouchMove={this.__restart}>
                     {flattenCells.map(function(result) {
                         return <Cell key={result.id} point={result.point} size={size} alive={result.alive} color={result.color}/>;
                     })}
                 </div>
                 <div id='controls'>
-                    <button className='btn' onClick={this.togglePlay} >
+                    <button className='btn' onClick={this.togglePlay}>
                         {this.playButtonText()}
                     </button>
                     <button className='btn' onClick={this.restart}>
-                        Restart
+                        Restart (r)
                     </button>
                 </div>
             </div>
