@@ -65,6 +65,10 @@ body {
 .dead {
   display: none; }
 
+.untouched {
+  display: inline;
+  background-color: #efefef !important; }
+
 #controls {
   position: fixed;
   bottom: 0;

@@ -82,6 +82,7 @@ var Game = React.createClass({
             var colCells = initGrid[col];
             for (var row = 0; row < gridState.rows; row++) {
                 var alive = is_alive(),
+                    untouched = !alive,
                     point = new Point(col, row),
                     color = cellColors[colorIdx];
                 // Assign a color if alive
@@ -89,7 +90,8 @@ var Game = React.createClass({
                     neighbors: 0,
                     point: point,
                     alive: alive,
-                    color: color
+                    color: color,
+                    untouched: untouched
                 });
                 colorIdx++;
             }
@@ -114,7 +116,8 @@ var Game = React.createClass({
         var updatedRow = row.map(function(cell) {
             var neighborPoints = cell.point.neighbors(),
                 aliveNeighbors = 0,
-                cellIsAlive    = cell.alive;
+                cellIsAlive    = cell.alive,
+                untouched      = cell.untouched
 
             // For each neighbor, check if it exists
             // and count the number that are alive
@@ -132,10 +135,12 @@ var Game = React.createClass({
             } else if (aliveNeighbors == 3) {
                 // Revive
                 cellIsAlive = true;
+                untouched   = false;
             }
 
             var newCell = React.addons.update(cell, {
-                alive:     {$set: cellIsAlive}
+                alive:     {$set: cellIsAlive},
+                untouched: {$set: untouched}
             });
             return newCell;
         });
@@ -200,7 +205,7 @@ var Game = React.createClass({
             <div>
                 <div id='board' onClick={this.__onClick}>
                     {flattenCells.map(function(result) {
-                        return <Cell key={result.id} point={result.point} size={size} alive={result.alive} color={result.color}/>;
+                        return <Cell key={result.id} point={result.point} size={size} alive={result.alive} untouched={result.untouched} color={result.color}/>;
                     })}
                 </div>
                 <div id='controls'>
