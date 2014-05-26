@@ -30,8 +30,7 @@ var Game = React.createClass({
         var boardWidth      = document.getElementById('container').clientWidth,
             cellSize        = Math.floor(boardWidth * 0.03),
             clientHeight    = document.getElementById('container').clientHeight,
-            boardHeight     = (clientHeight - (cellSize * 2)),
-            controlsHeight  = (cellSize * 2);
+            boardHeight     = (clientHeight - 100);
 
         var cols = Math.floor(boardWidth / cellSize),
             rows = Math.floor(boardHeight / cellSize);
@@ -39,8 +38,7 @@ var Game = React.createClass({
         return {
             cellSize: cellSize,
             rows: rows,
-            cols: cols,
-            controlsHeight: controlsHeight
+            cols: cols
         }
     },
     getColorVals: function(numColors) {
@@ -96,7 +94,6 @@ var Game = React.createClass({
             cellSize: gridState.cellSize,
             columns: gridState.rows,
             rows: gridState.cols,
-            controlsHeight: gridState.controlsHeight,
             grid: initGrid,
             time: time,
             gameState: 'PAUSE',
@@ -164,15 +161,25 @@ var Game = React.createClass({
 
         this.setState({grid: nextGrid})
     },
-    play: function () {
-        this.setState({gameState: 'PLAY'});
+    togglePlay: function () {
+        if (this.state.gameState == 'PLAY') {
+            this.setState({gameState: 'PAUSE'});
+        } else {
+            this.setState({gameState: 'PLAY'});
+        }
+    },
+    playButtonText: function () {
+        if (this.state.gameState == 'PLAY') {
+            return 'PAUSE'
+        } else {
+            return 'PLAY'
+        }
     },
     render: function() {
         var time         = this.state.time,
             size         = this.state.cellSize,
             cells        = this.state.grid,
-            flattenCells = [].concat.apply([], cells),
-            controlsHeight = this.state.controlsHeight;
+            flattenCells = [].concat.apply([], cells);
 
         return (
             <div>
@@ -182,10 +189,10 @@ var Game = React.createClass({
                     })}
                 </div>
                 <div id='controls'>
-                    <button onClick={this.play} >
-                        Play
+                    <button className='btn' onClick={this.togglePlay} >
+                        {this.playButtonText()}
                     </button>
-                    <button onClick={this.restart}>
+                    <button className='btn' onClick={this.restart}>
                         Restart
                     </button>
                 </div>

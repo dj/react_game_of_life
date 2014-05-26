@@ -68,6 +68,13 @@ body {
 #controls {
   position: fixed;
   bottom: 0;
+  height: 100px;
   width: 100%;
-  background-color: white;
   z-index: 10; }
+
+.btn {
+  border: 3px solid #222222;
+  color: #222;
+  width: 33%;
+  height: 100%;
+  font-size: 20px; }
