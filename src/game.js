@@ -27,22 +27,20 @@ function Point(x, y) {
 
 var Game = React.createClass({
     getGridVals: function () {
-        var boardWidth  = document.getElementById('container').clientWidth,
-            boardHeight = document.getElementById('container').clientHeight;
+        var boardWidth      = document.getElementById('container').clientWidth,
+            cellSize        = Math.floor(boardWidth * 0.03),
+            clientHeight    = document.getElementById('container').clientHeight,
+            boardHeight     = (clientHeight - (cellSize * 2)),
+            controlsHeight  = (cellSize * 2);
 
-            if (boardWidth > boardHeight) {
-                var cellSize = Math.floor(boardWidth * 0.03) + 1
-            } else {
-                var cellSize = Math.floor(boardHeight * 0.03) + 1;
-            }
-
-        var cols = Math.floor(boardWidth / cellSize) + 1,
-            rows = Math.floor(boardHeight / cellSize) + 1;
+        var cols = Math.floor(boardWidth / cellSize),
+            rows = Math.floor(boardHeight / cellSize);
 
         return {
             cellSize: cellSize,
             rows: rows,
-            cols: cols
+            cols: cols,
+            controlsHeight: controlsHeight
         }
     },
     getColorVals: function(numColors) {
@@ -98,6 +96,7 @@ var Game = React.createClass({
             cellSize: gridState.cellSize,
             columns: gridState.rows,
             rows: gridState.cols,
+            controlsHeight: gridState.controlsHeight,
             grid: initGrid,
             time: time,
             gameState: 'PAUSE',
@@ -152,7 +151,7 @@ var Game = React.createClass({
     componentDidMount: function() {
         this.interval = setInterval(this.tick, 100);
     },
-    __restart: function() {
+    restart: function() {
         var newGame = this.getInitialState();
         this.setState(newGame);
     },
@@ -161,26 +160,35 @@ var Game = React.createClass({
             y = Math.floor(e.clientY / this.state.cellSize),
             nextGrid = this.state.grid;
 
-        if (this.state.gameState === 'PAUSE') this.setState({gameState: 'PLAY'})
-
         nextGrid[x][y].alive = true;
 
         this.setState({grid: nextGrid})
+    },
+    play: function () {
+        this.setState({gameState: 'PLAY'});
     },
     render: function() {
         var time         = this.state.time,
             size         = this.state.cellSize,
             cells        = this.state.grid,
-            flattenCells = [].concat.apply([], cells);
+            flattenCells = [].concat.apply([], cells),
+            controlsHeight = this.state.controlsHeight;
 
         return (
-            <div id='board' onClick={this.__onClick} onTouchStart={this.__onClick} onDoubleClick={this.__restart} onTouchMove={this.__restart}>
-                <div id='time'>
-                    <p>{this.state.time}</p>
+            <div>
+                <div id='board' onClick={this.__onClick} onTouchStart={this.__onClick} onDoubleClick={this.restart} onTouchMove={this.__restart}>
+                    {flattenCells.map(function(result) {
+                        return <Cell key={result.id} point={result.point} size={size} alive={result.alive} color={result.color}/>;
+                    })}
                 </div>
-                {flattenCells.map(function(result) {
-                    return <Cell revive={this._revive} point={result.point} size={size} alive={result.alive} color={result.color}/>;
-                })}
+                <div id='controls'>
+                    <button onClick={this.play} >
+                        Play
+                    </button>
+                    <button onClick={this.restart}>
+                        Restart
+                    </button>
+                </div>
             </div>
         )
     }
