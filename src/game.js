@@ -152,6 +152,7 @@ var Game = React.createClass({
     },
     componentDidMount: function() {
         this.interval = setInterval(this.tick, 100);
+        window.addEventListener('keypress', this.handleKeyPress);
     },
     restart: function() {
         var newGame = this.getInitialState();
@@ -182,11 +183,10 @@ var Game = React.createClass({
     },
     handleKeyPress: function(e) {
         console.log(e.which);
-        // Space toggles play
-        if (e.which == '32') {
+        if (e.which == '32') { // Space
             e.preventDefault();
             this.togglePlay();
-        } else if (e.which == '82') {
+        } else if (e.which == '114') { // r
             this.restart();
         }
     },
@@ -197,8 +197,8 @@ var Game = React.createClass({
             flattenCells = [].concat.apply([], cells);
 
         return (
-            <div onKeyDown={this.handleKeyPress}>
-                <div id='board' onClick={this.__onClick} onKeyDown={this.handleKeyPress} onKeyDown={this.handleKeyDown} onTouchMove={this.__restart}>
+            <div>
+                <div id='board' onClick={this.__onClick}>
                     {flattenCells.map(function(result) {
                         return <Cell key={result.id} point={result.point} size={size} alive={result.alive} color={result.color}/>;
                     })}
