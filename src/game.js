@@ -109,7 +109,7 @@ var Game = React.createClass({
             columns: gridState.rows,
             rows: gridState.cols,
             boardWidth: boardWidth,
-            boardHeight: boardWidth,
+            boardHeight: boardHeight,
             boardMarginLeft: boardMarginLeft,
             boardMarginTop: boardMarginTop,
             grid: initGrid,
@@ -200,12 +200,16 @@ var Game = React.createClass({
     },
     handleKeyPress: function(e) {
         e.stopPropagation();
-        console.log(e.which);
         if (e.which == '32') { // Space
+            e.preventDefault();
             this.togglePlay();
         } else if (e.which == '114') { // r
             this.restart();
         }
+    },
+    handleKeyUp: function(e) {
+        e.stopPropagation();
+        e.preventDefault();
     },
     render: function() {
         var time         = this.state.time,
@@ -226,10 +230,10 @@ var Game = React.createClass({
                     })}
                 </div>
                 <div id='controls'>
-                    <button className='btn' onClick={this.togglePlay}>
+                    <button className='btn' onClick={this.togglePlay} onKeyUp={this.handleKeyUp}>
                         {this.playButtonText()}
                     </button>
-                    <button className='btn' onClick={this.restart}>
+                    <button className='btn' onClick={this.restart} onKeyUp={this.handleKeyUp} focusEnabled={false}>
                         Restart (r)
                     </button>
                 </div>

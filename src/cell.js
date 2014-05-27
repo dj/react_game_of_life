@@ -8,7 +8,8 @@ var Cell = React.createClass({
                 height: this.props.size,
                 left: (this.props.size * this.props.point.x),
                 top: (this.props.size * this.props.point.y),
-                backgroundColor: this.props.color
+                backgroundColor: this.props.color,
+                color: this.props.color
             },
             dead = (!this.props.alive && !this.props.untouched),
             x = this.props.point.x,
@@ -17,6 +18,7 @@ var Cell = React.createClass({
         classes = cx({
             'cell': true,
             'untouched': this.props.untouched,
+            'alive': this.props.alive,
             'dead': dead
         });
 
