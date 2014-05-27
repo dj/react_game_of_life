@@ -45,25 +45,34 @@ $black: #222;
 ///////////
 
 body {
+    position: fixed;
     margin: 0;
     width: 100%;
     height: 100%;
 }
 
 #container {
-    background-color: $black;
-    position: absolute;
+    background-color: #efefef;
+    position: fixed;
     width: 100%;
     height: 100%;
     margin: 0;
     z-index: -1;
 }
 
-#board {
+#game-container {
     position: fixed;
+    height: 100%;
+    width: 100%;
+}
+
+#board {
+    background-color: #efefef;
+    position: relative;
     width: 100%;
     height: 100%;
-    margin: 0;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 #time {
@@ -91,13 +100,16 @@ body {
     z-index: 1;
 }
 
+.cell:hover {
+    border: 2px solid green;
+}
+
 .dead {
     display: none;
 }
 
 .untouched {
-    display: inline;
-    background-color: #efefef !important;
+    background-color: #333 !important;
 }
 
 //////////////

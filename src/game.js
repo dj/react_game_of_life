@@ -27,20 +27,21 @@ function Point(x, y) {
 
 var Game = React.createClass({
     getGridVals: function () {
-        var boardWidth      = document.getElementById('container').clientWidth,
-            clientHeight    = document.getElementById('container').clientHeight,
-            boardHeight     = (clientHeight - 100);
+        var clientWidth     = document.getElementById('container').clientWidth,
+            clientHeight    = document.getElementById('container').clientHeight - 100;
 
-        if (boardWidth > boardHeight) {
-            var cellSize = Math.floor(boardWidth * 0.03);
+        if (clientWidth > clientHeight) {
+            var cellSize = Math.floor(clientWidth * 0.03);
         } else {
-            var cellSize = Math.floor(boardHeight * 0.10);
+            var cellSize = Math.floor(clientHeight * 0.10);
         }
 
-        var cols = Math.floor(boardWidth / cellSize),
-            rows = Math.floor(boardHeight / cellSize);
+        var cols = Math.floor(clientWidth / cellSize),
+            rows = Math.floor(clientHeight / cellSize) ;
 
         return {
+            clientHeight: clientHeight,
+            clientWidth: clientWidth,
             cellSize: cellSize,
             rows: rows,
             cols: cols
@@ -62,12 +63,18 @@ var Game = React.createClass({
 
     },
     getInitialState: function () {
-        var time       = 0,
-            initGrid   = [],
-            gridState  = this.getGridVals(),
-            numCells   = (gridState.cols * gridState.rows),
-            cellColors = this.getColorVals(numCells),
-            colorIdx   = 0;
+        var time        = 0,
+            initGrid    = [],
+            gridState   = this.getGridVals(),
+            numCells    = (gridState.cols * gridState.rows),
+            cellColors  = this.getColorVals(numCells),
+            colorIdx    = 0,
+            boardWidth  = (gridState.cols * gridState.cellSize),
+            boardHeight = (gridState.rows * gridState.cellSize),
+            boardMarginTop = (((gridState.clientHeight - boardHeight)) / 2),
+            boardMarginLeft = ((gridState.clientWidth  - boardWidth) / 2)
+
+        console.log(boardMarginTop)
 
         // Initialize empty arrays
         for (var col = 0; col < gridState.cols; col++) {
@@ -101,6 +108,10 @@ var Game = React.createClass({
             cellSize: gridState.cellSize,
             columns: gridState.rows,
             rows: gridState.cols,
+            boardWidth: boardWidth,
+            boardHeight: boardWidth,
+            boardMarginLeft: boardMarginLeft,
+            boardMarginTop: boardMarginTop,
             grid: initGrid,
             time: time,
             gameState: 'PAUSE',
@@ -156,7 +167,7 @@ var Game = React.createClass({
         }
     },
     componentDidMount: function() {
-        this.interval = setInterval(this.tick, 100);
+        this.interval = setInterval(this.tick, 150);
         window.addEventListener('keypress', this.handleKeyPress);
     },
     restart: function() {
@@ -164,11 +175,12 @@ var Game = React.createClass({
         this.setState(newGame);
     },
     __onClick: function(e) {
-        var x = Math.floor(e.clientX / this.state.cellSize),
-            y = Math.floor(e.clientY / this.state.cellSize),
+        var x = Math.floor((e.clientX - this.state.boardMarginLeft)/ this.state.cellSize),
+            y = Math.floor((e.clientY - this.state.boardMarginTop)/ this.state.cellSize),
             nextGrid = this.state.grid;
 
         nextGrid[x][y].alive = true;
+        nextGrid[x][y].untouched = false;
 
         this.setState({grid: nextGrid})
     },
@@ -187,9 +199,9 @@ var Game = React.createClass({
         }
     },
     handleKeyPress: function(e) {
+        e.stopPropagation();
         console.log(e.which);
         if (e.which == '32') { // Space
-            e.preventDefault();
             this.togglePlay();
         } else if (e.which == '114') { // r
             this.restart();
@@ -199,11 +211,16 @@ var Game = React.createClass({
         var time         = this.state.time,
             size         = this.state.cellSize,
             cells        = this.state.grid,
-            flattenCells = [].concat.apply([], cells);
+            flattenCells = [].concat.apply([], cells),
+            boardStyle   = {
+                width: this.state.boardWidth,
+                height: this.state.boardHeight,
+                marginTop: this.state.boardMarginTop,
+            }
 
         return (
-            <div>
-                <div id='board' onClick={this.__onClick}>
+            <div id='game-container'>
+                <div id='board' style={boardStyle} onClick={this.__onClick}>
                     {flattenCells.map(function(result) {
                         return <Cell key={result.id} point={result.point} size={size} alive={result.alive} untouched={result.untouched} color={result.color}/>;
                     })}
