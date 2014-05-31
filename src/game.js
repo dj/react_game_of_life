@@ -177,7 +177,7 @@ var Game = React.createClass({
     },
     revive: function(e) {
         var x = Math.floor((e.clientX - this.state.boardMarginLeft)/ this.state.cellSize),
-            y = Math.floor((e.clientY - this.state.boardMarginTop)/ this.state.cellSize),
+            y = Math.floor(e.clientY / this.state.cellSize),
             nextGrid = this.state.grid;
 
             console.log(x + ", " + y)
@@ -234,20 +234,23 @@ var Game = React.createClass({
             },
             controlsStyle = {
                 height: this.state.buttonHeight
-            }
+            },
+            revive = this.revive;
+
+        var cellNodes = flattenCells.map(function(result) {
+            return <Cell key={result.id}
+                         reviveCell={revive}
+                         point={result.point}
+                         size={size}
+                         alive={result.alive}
+                         untouched={result.untouched}
+                         color={result.color} />;
+        })
 
         return (
             <div id='game-container'>
                 <div id='board' style={boardStyle}>
-                    {flattenCells.map(function(result) {
-                        return <Cell key={result.id}
-                                     onClick={this.revive}
-                                     point={result.point}
-                                     size={size}
-                                     alive={result.alive}
-                                     untouched={result.untouched}
-                                     color={result.color} />;
-                    })}
+                    {cellNodes}
                 </div>
                 <div id='controls' style={controlsStyle}>
                     <button className='btn' onClick={this.togglePlay} onKeyUp={this.handleKeyUp}>

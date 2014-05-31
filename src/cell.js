@@ -1,6 +1,9 @@
 /** @jsx React.DOM */
 
 var Cell = React.createClass({
+    cellHandleClick: function (e) {
+        this.props.reviveCell(e);
+    },
     render: function() {
         var cx = React.addons.classSet,
             style = {
@@ -23,7 +26,7 @@ var Cell = React.createClass({
         });
 
         return (
-            <div className={classes} style={style}>
+            <div onClick={this.cellHandleClick} className={classes} style={style}>
             </div>
         )
     }
