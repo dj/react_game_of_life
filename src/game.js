@@ -28,16 +28,18 @@ function Point(x, y) {
 var Game = React.createClass({
     getGridVals: function () {
         var clientWidth     = document.getElementById('container').clientWidth,
-            clientHeight    = document.getElementById('container').clientHeight - 100;
+            clientHeight    = document.getElementById('container').clientHeight;
 
-        if (clientWidth > clientHeight) {
-            var cellSize = Math.floor(clientWidth * 0.03);
+        if (clientWidth > (clientHeight * 1.2)) {
+            var boardHeight = (clientHeight * 0.9),
+                cellSize = Math.floor(clientWidth * 0.025);
         } else {
-            var cellSize = Math.floor(clientHeight * 0.10);
+            var boardHeight = (clientHeight * 0.8),
+                cellSize = Math.floor(clientWidth * 0.1);
         }
 
         var cols = Math.floor(clientWidth / cellSize),
-            rows = Math.floor(clientHeight / cellSize) ;
+            rows = Math.floor(boardHeight / cellSize);
 
         return {
             clientHeight: clientHeight,
@@ -60,7 +62,6 @@ var Game = React.createClass({
             colors.push(rgbString)
         }
         return colors
-
     },
     getInitialState: function () {
         var time        = 0,
@@ -71,10 +72,9 @@ var Game = React.createClass({
             colorIdx    = 0,
             boardWidth  = (gridState.cols * gridState.cellSize),
             boardHeight = (gridState.rows * gridState.cellSize),
-            boardMarginTop = (((gridState.clientHeight - boardHeight)) / 2),
-            boardMarginLeft = ((gridState.clientWidth  - boardWidth) / 2)
-
-        console.log(boardMarginTop)
+            boardMarginTop = (((gridState.boardHeight - boardHeight)) / 2),
+            boardMarginLeft = ((gridState.clientWidth  - boardWidth) / 2),
+            buttonHeight    = gridState.clientHeight - boardHeight
 
         // Initialize empty arrays
         for (var col = 0; col < gridState.cols; col++) {
@@ -112,6 +112,7 @@ var Game = React.createClass({
             boardHeight: boardHeight,
             boardMarginLeft: boardMarginLeft,
             boardMarginTop: boardMarginTop,
+            buttonHeight: buttonHeight,
             grid: initGrid,
             time: time,
             gameState: 'PAUSE',
@@ -182,7 +183,13 @@ var Game = React.createClass({
         nextGrid[x][y].alive = true;
         nextGrid[x][y].untouched = false;
 
-        this.setState({grid: nextGrid})
+        this.setState({grid: nextGrid});
+    },
+    step: function () {
+        var nextGrid = this.state.grid.map(this.updateCells),
+            nextTime = this.state.time + 1;
+
+        this.setState({grid: nextGrid, time: nextTime})
     },
     togglePlay: function () {
         if (this.state.gameState == 'PLAY') {
@@ -205,6 +212,8 @@ var Game = React.createClass({
             this.togglePlay();
         } else if (e.which == '114') { // r
             this.restart();
+        } else if (e.which == '115') {
+            this.step();
         }
     },
     handleKeyUp: function(e) {
@@ -220,21 +229,33 @@ var Game = React.createClass({
                 width: this.state.boardWidth,
                 height: this.state.boardHeight,
                 marginTop: this.state.boardMarginTop,
+            },
+            controlsStyle = {
+                height: this.state.buttonHeight
             }
 
         return (
             <div id='game-container'>
-                <div id='board' style={boardStyle} onClick={this.__onClick}>
+                <div id='board' style={boardStyle}>
                     {flattenCells.map(function(result) {
-                        return <Cell key={result.id} point={result.point} size={size} alive={result.alive} untouched={result.untouched} color={result.color}/>;
+                        return <Cell key={result.id}
+                                     onClick={this.__onClick}
+                                     point={result.point}
+                                     size={size}
+                                     alive={result.alive}
+                                     untouched={result.untouched}
+                                     color={result.color} />;
                     })}
                 </div>
-                <div id='controls'>
+                <div id='controls' style={controlsStyle}>
                     <button className='btn' onClick={this.togglePlay} onKeyUp={this.handleKeyUp}>
                         {this.playButtonText()}
                     </button>
                     <button className='btn' onClick={this.restart} onKeyUp={this.handleKeyUp} focusEnabled={false}>
                         Restart (r)
+                    </button>
+                    <button className='btn' onClick={this.step} onKeyUp={this.handleKeyUp} focusEnabled={false}>
+                        Step (s)
                     </button>
                 </div>
             </div>
