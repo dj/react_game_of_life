@@ -57,7 +57,6 @@ body {
     width: 100%;
     height: 100%;
     margin: 0;
-    z-index: -1;
 }
 
 #game-container {
@@ -96,10 +95,10 @@ body {
     display: inline;
     position: absolute;
     margin: 0;
-    z-index: 10;
 }
 
 .alive {
+    z-index: 1;
     box-shadow: 3px 3px 0px 5px;
     @include box-shadow(border-box);
 }
@@ -109,13 +108,11 @@ body {
 }
 
 .dead {
-    z-index: 0;
     background-color: #222 !important;
 }
 
 .untouched {
     background-color: #333 !important;
-    z-index: 0;
 }
 
 //////////////

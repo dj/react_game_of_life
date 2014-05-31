@@ -167,18 +167,20 @@ var Game = React.createClass({
             this.setState({grid: nextGrid, time: nextTime});
         }
     },
-    componentDidMount: function() {
+    componentDidMount: function () {
         this.interval = setInterval(this.tick, 150);
         window.addEventListener('keypress', this.handleKeyPress);
     },
-    restart: function() {
+    restart: function () {
         var newGame = this.getInitialState();
         this.setState(newGame);
     },
-    __onClick: function(e) {
+    revive: function(e) {
         var x = Math.floor((e.clientX - this.state.boardMarginLeft)/ this.state.cellSize),
             y = Math.floor((e.clientY - this.state.boardMarginTop)/ this.state.cellSize),
             nextGrid = this.state.grid;
+
+            console.log(x + ", " + y)
 
         nextGrid[x][y].alive = true;
         nextGrid[x][y].untouched = false;
@@ -239,7 +241,7 @@ var Game = React.createClass({
                 <div id='board' style={boardStyle}>
                     {flattenCells.map(function(result) {
                         return <Cell key={result.id}
-                                     onClick={this.__onClick}
+                                     onClick={this.revive}
                                      point={result.point}
                                      size={size}
                                      alive={result.alive}
